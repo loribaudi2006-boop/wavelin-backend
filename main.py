@@ -38,17 +38,6 @@ def root():
     return {"ok": True, "message": "Wavelin backend attivo."}
 
 
-@app.get("/api/debug")
-def debug():
-    return {
-        "cwd": os.getcwd(),
-        "cookies_file_path": COOKIES_FILE,
-        "cookies_exists": os.path.exists(COOKIES_FILE),
-        "cookies_size": os.path.getsize(COOKIES_FILE) if os.path.exists(COOKIES_FILE) else None,
-        "etc_secrets_exists": os.path.exists("/etc/secrets/cookies.txt"),
-    }
-
-
 @app.get("/api/search")
 def search(q: str = Query(..., min_length=1)):
     opts = {
