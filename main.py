@@ -8,9 +8,13 @@ Espone due endpoint:
 Nessun servizio di terzi: yt-dlp parla direttamente con YouTube.
 """
 
+import os
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 import yt_dlp
+
+COOKIES_FILE = os.environ.get("YT_COOKIES_FILE", "cookies.txt")
 
 app = FastAPI(title="Wavelin backend")
 
@@ -74,8 +78,10 @@ def stream(video_id: str):
         "skip_download": True,
         "noplaylist": True,
         "format": "bestaudio/best",
-        "extractor_args": {"youtube": {"player_client": ["android", "web"]}},
+        "extractor_args": {"youtube": {"player_client": ["web"]}},
     }
+    if os.path.exists(COOKIES_FILE):
+        opts["cookiefile"] = COOKIES_FILE
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
             info = ydl.extract_info(url, download=False)
